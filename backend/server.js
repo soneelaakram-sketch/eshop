@@ -3,21 +3,22 @@ const app = require("./app");
 // Handling uncaught Exception
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
-  console.log(`shutting down the server for handling uncaught exception`);
+  console.log(`Handling uncaught exception...`);
 });
 
-// create server
-const PORT = process.env.PORT || 8000;
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-// unhandled promise rejection
+// Handling unhandled promise rejection
 process.on("unhandledRejection", (err) => {
-  console.log(`Shutting down the server for ${err.message}`);
-  console.log(`shutting down the server for unhandle promise rejection`);
-
-  server.close(() => {
-    process.exit(1);
-  });
+  console.log(`Error: ${err.message}`);
+  console.log(`Handling unhandled promise rejection...`);
 });
+
+// Local environment ke liye listen karega, Vercel standard export use karega
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  const PORT = process.env.PORT || 8000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
+
+// Vercel serverless function ke liye Export zaroori hai
+module.exports = app;
