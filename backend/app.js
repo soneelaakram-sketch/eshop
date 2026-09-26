@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-// connect db (also needed for Vercel serverless, since server.js never runs there)
+// connect db
 connectDatabase();
 
 cloudinary.config({
@@ -23,17 +23,27 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-app.use(cors({
-  origin: ["http://localhost:3000", "https://eshop-tutorial.vercel.app"],
-  credentials: true
-}));
-app.use(express.json());
+// CORS Config - Wildcard & Specific Origins Support
+app.use(
+  cors({
+    origin: true, // Allow requests from any origin (React frontend / Vercel links)
+    credentials: true,
+  })
+);
+
+app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
-app.use("/test", (req, res) => {
-  res.send("Hello world!");
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+
+// Root Home Route (Fixes 'Cannot GET /')
+app.get("/", (req, res) => {
+  res.send("Server is running successfully on Vercel!");
 });
 
-app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+// Test Route
+app.get("/test", (req, res) => {
+  res.send("Hello world!");
+});
 
 // import routes
 const user = require("./controller/user");
@@ -58,7 +68,7 @@ app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/payment", payment);
 app.use("/api/v2/withdraw", withdraw);
 
-// it's for ErrorHandling
+// Error Handling
 app.use(ErrorHandler);
 
 module.exports = app;

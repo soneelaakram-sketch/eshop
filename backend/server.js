@@ -12,7 +12,7 @@ process.on("unhandledRejection", (err) => {
   console.log(`Handling unhandled promise rejection...`);
 });
 
-// Local environment ke liye listen karega, Vercel standard export use karega
+// Local environment ke liye listen karega
 if (process.env.NODE_ENV !== "PRODUCTION") {
   const PORT = process.env.PORT || 8000;
   app.listen(PORT, () => {
@@ -20,5 +20,4 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-// Vercel serverless function ke liye Export zaroori hai
 module.exports = app;
